@@ -5,6 +5,7 @@ Created on Sun Aug  5 23:20:53 2018
 
 @author: ituarc
 """
+import time
 import cv2
 import matplotlib.pyplot as plt
 import io
@@ -42,56 +43,61 @@ def imageio2cvimg(image):
     out[:,:,0] = image[:,:,2]
     return out
 
-video_url = '/media/ituarc/5050161626/720-24-rendered.mp4'
+# =============================================================================
+# Project Config
+# =============================================================================
+video_url = '/home/ituarc/720-24-rendered.mp4'
+output_video_path = 'output.avi'
+model_compile = True
+model_path = 'weights/VGG_VOC0712_SSD_300x300_ft_iter_120000.h5'
+weights_path = 'weights/VGG_VOC0712_SSD_300x300_ft_iter_120000.h5'
 
 img_height = 300
 img_width = 300
 font = cv2.FONT_HERSHEY_COMPLEX_SMALL
 font_scale = 0.7
 thickness = 1
-baseline = 0
-
-
+baseline = 0 
+# =============================================================================
 K.clear_session() # Clear previous models from memory.
 
-model = ssd_300(image_size=(img_height, img_width, 3),
-                n_classes=20,
-                mode='inference',
-                l2_regularization=0.0005,
-                scales=[0.1, 0.2, 0.37, 0.54, 0.71, 0.88, 1.05], # The scales for MS COCO are [0.07, 0.15, 0.33, 0.51, 0.69, 0.87, 1.05]
-                aspect_ratios_per_layer=[[1.0, 2.0, 0.5],
-                                         [1.0, 2.0, 0.5, 3.0, 1.0/3.0],
-                                         [1.0, 2.0, 0.5, 3.0, 1.0/3.0],
-                                         [1.0, 2.0, 0.5, 3.0, 1.0/3.0],
-                                         [1.0, 2.0, 0.5],
-                                         [1.0, 2.0, 0.5]],
-                two_boxes_for_ar1=True,
-                steps=[8, 16, 32, 64, 100, 300],
-                offsets=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5],
-                clip_boxes=False,
-                variances=[0.1, 0.1, 0.2, 0.2],
-                normalize_coords=True,
-                subtract_mean=[123, 117, 104],
-                swap_channels=[2, 1, 0],
-                confidence_thresh=0.5,
-                iou_threshold=0.45,
-                top_k=200,
-                nms_max_output_size=400)
-
-# 2: Load the trained weights into the model.
-
-# TODO: Set the path of the trained weights.
-weights_path = 'weights/VGG_VOC0712_SSD_300x300_ft_iter_120000.h5'
-
-model.load_weights(weights_path, by_name=True)
-
-# 3: Compile the model so that Keras won't complain the next time you load it.
-
-adam = Adam(lr=0.001, beta_1=0.9, beta_2=0.999, epsilon=1e-08, decay=0.0)
-
-ssd_loss = SSDLoss(neg_pos_ratio=3, alpha=1.0)
-
-model.compile(optimizer=adam, loss=ssd_loss.compute_loss)
+if model_compile == True:    
+    model = ssd_300(image_size=(img_height, img_width, 3),
+                    n_classes=20,
+                    mode='inference',
+                    l2_regularization=0.0005,
+                    scales=[0.1, 0.2, 0.37, 0.54, 0.71, 0.88, 1.05], # The scales for MS COCO are [0.07, 0.15, 0.33, 0.51, 0.69, 0.87, 1.05]
+                    aspect_ratios_per_layer=[[1.0, 2.0, 0.5],
+                                             [1.0, 2.0, 0.5, 3.0, 1.0/3.0],
+                                             [1.0, 2.0, 0.5, 3.0, 1.0/3.0],
+                                             [1.0, 2.0, 0.5, 3.0, 1.0/3.0],
+                                             [1.0, 2.0, 0.5],
+                                             [1.0, 2.0, 0.5]],
+                    two_boxes_for_ar1=True,
+                    steps=[8, 16, 32, 64, 100, 300],
+                    offsets=[0.5, 0.5, 0.5, 0.5, 0.5, 0.5],
+                    clip_boxes=False,
+                    variances=[0.1, 0.1, 0.2, 0.2],
+                    normalize_coords=True,
+                    subtract_mean=[123, 117, 104],
+                    swap_channels=[2, 1, 0],
+                    confidence_thresh=0.5,
+                    iou_threshold=0.45,
+                    top_k=200,
+                    nms_max_output_size=400)
+    
+    model.load_weights(weights_path, by_name=True)
+    adam = Adam(lr=0.001, beta_1=0.9, beta_2=0.999, epsilon=1e-08, decay=0.0)
+    ssd_loss = SSDLoss(neg_pos_ratio=3, alpha=1.0)
+    model.compile(optimizer=adam, loss=ssd_loss.compute_loss)
+else:
+    # We need to create an SSDLoss object in order to pass that to the model loader.
+    ssd_loss = SSDLoss(neg_pos_ratio=3, n_neg_min=0, alpha=1.0)
+    K.clear_session() # Clear previous models from memory.
+    model = load_model(model_path, custom_objects={'AnchorBoxes': AnchorBoxes,
+                                                   'L2Normalization': L2Normalization,
+                                                   'DecodeDetections': DecodeDetections,
+                                                   'compute_loss': ssd_loss.compute_loss})
 
 # =============================================================================
 ## OpenCV for video frames
@@ -125,8 +131,11 @@ image_out = []
 #videowriter = get_writer('prediction_ssd.mp4', fps=24)
 #video = cv2.VideoWriter('out_video.avi',-1,24,(1280,720))
 fourcc = cv2.VideoWriter_fourcc(*'XVID')
-out_vid = cv2.VideoWriter('output.avi',fourcc, 24.0, (1280,720))
+out_vid = cv2.VideoWriter(output_video_path,fourcc, 24.0, (1280,720))
 reader = get_reader(video_url)
+y_pred_thresh_backup = []
+y_pred_thresh = []
+
 for i, frame in enumerate(reader):
     orig_images = []
     orig_images.append(frame)
@@ -135,13 +144,19 @@ for i, frame in enumerate(reader):
     input_images = []
     input_images.append(img)
     input_images = np.array(input_images)
-
+    start_time = time.time()
     y_pred = model.predict(input_images)
-
+    prediction_time = (time.time() - start_time)
+    FPS = int(1/prediction_time)
+    FPS = 'Pred '+str(FPS)+' FPS'
     confidence_threshold = 0.1
 
-    y_pred_thresh = [y_pred[k][y_pred[k,:,1] > confidence_threshold] for k in range(y_pred.shape[0])]
-
+    if i % 2 == 0 and i>3:
+        y_pred_thresh = y_pred_thresh_backup.copy()
+    else:
+        y_pred_thresh = [y_pred[k][y_pred[k,:,1] > confidence_threshold] for k in range(y_pred.shape[0])]
+        y_pred_thresh_backup = y_pred_thresh.copy()
+        
     np.set_printoptions(precision=2, suppress=True, linewidth=90)
 #    print("Predicted boxes:\n")
 #    print('   class   conf xmin   ymin   xmax   ymax')
@@ -152,20 +167,19 @@ for i, frame in enumerate(reader):
     # Set the colors for the bounding boxes
     colors = plt.cm.hsv(np.linspace(0, 1, 21)).tolist()
     classes = ['background',
-               '1', 'bisiklet', '1', '1',
-               '1', 'otobus', 'araba', '1',
-               '1', 'inek', 'masa', '1',
-               '1', 'motorsiklet', 'insan', '1',
-               '1', '1', '1', '1']
-#
-#    plt.figure(figsize=(20,12))
-#    plt.imshow(orig_images[0])
+               'ucak', 'bisiklet', '', '',
+               '', 'otobus', 'araba', '',
+               '', '', '', '',
+               '', 'motorsiklet', 'insan', '',
+               '', '', '', '']
 
-#    current_axis = plt.gca()
+    
+    cv2.rectangle(frame, (10, 10), (180, 35), (255, 255, 255), cv2.FILLED)
+    cv2.putText(frame,FPS,(30, 30), font, font_scale,(00,00,00),thickness)
     
     for box in y_pred_thresh[0]:
         label = '{}: {:.2f}'.format(classes[int(box[0])], box[1])
-        if label=='1':
+        if classes[int(box[0])]=='':
             continue
         # Transform the predicted bounding boxes for the 300x300 image to the original image dimensions.
         xmin = box[2] * orig_images[0].shape[1] / img_width
@@ -173,21 +187,18 @@ for i, frame in enumerate(reader):
         xmax = box[4] * orig_images[0].shape[1] / img_width
         ymax = box[5] * orig_images[0].shape[0] / img_height
         color = colors[int(box[0])]
-#        label = '{}: {:.2f}'.format(classes[int(box[0])], box[1])
-#        current_axis.add_patch(plt.Rectangle((xmin, ymin), xmax-xmin, ymax-ymin, color=color, fill=False, linewidth=2))  
-#        current_axis.text(xmin, ymin, label, size='x-large', color='white', bbox={'facecolor':color, 'alpha':1.0})
-             
+
         cv2.rectangle(frame, (int(xmin), int(ymin)), (int(xmax), int(ymin-17)), (00, 150, 00), cv2.FILLED)
         cv2.rectangle(frame, (int(xmin), int(ymin)), (int(xmax), int(ymax)), (00, 180, 00), 2)
         cv2.putText(frame,label,(int(xmin),int(ymin-5)), font, font_scale,(255,255,255),thickness)
         
-    
+        
 #    imwrite('out.jpg',frame)
     #fig = plt.gcf()
     #videowriter.append_data(frame)
     out_img = imageio2cvimg(frame)
     out_vid.write(out_img)
-#    if i > 200:
+#    if i > 100:
 #        break
 #videowriter.close()     
 #cv2.destroyAllWindows()
