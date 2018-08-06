@@ -98,3 +98,5 @@ ENV/
 local*
 
 *.h5
+
+*.avi
