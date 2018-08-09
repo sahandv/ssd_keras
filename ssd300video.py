@@ -46,12 +46,12 @@ def imageio2cvimg(image):
 # =============================================================================
 # Project Config
 # =============================================================================
-video_url = '/home/sahand/1024-10fps.mp4'
+video_url = '/home/sahand/720-24-rendered.mp4'
 output_video_path = 'output.avi'
 model_compile = True
 model_path = 'weights/VGG_VOC0712_SSD_300x300_ft_iter_120000.h5'
 weights_path = 'weights/VGG_VOC0712_SSD_300x300_ft_iter_120000.h5'
-video_out_res = (1024,576)
+#video_out_res = (1280,720)
 video_out_fps = 10
 img_height = 300
 img_width = 300
@@ -87,7 +87,7 @@ if model_compile == True:
                     iou_threshold=0.45,
                     top_k=200,
                     nms_max_output_size=400)
-    
+
     model.load_weights(weights_path, by_name=True)
     adam = Adam(lr=0.001, beta_1=0.9, beta_2=0.999, epsilon=1e-08, decay=0.0)
     ssd_loss = SSDLoss(neg_pos_ratio=3, alpha=1.0)
@@ -126,15 +126,16 @@ else:
 #     vv.processEvents()
 #     t.SetData(im)
 # =============================================================================
-    
+
 #orig_images = [] # Store the images here.
 #input_images = [] # Store resized versions of the images here.
 image_out = []
 #videowriter = get_writer('prediction_ssd.mp4', fps=24)
 #video = cv2.VideoWriter('out_video.avi',-1,24,(1280,720))
+reader = get_reader(video_url)
+video_out_res = reader.get_meta_data(index=1)['size']
 fourcc = cv2.VideoWriter_fourcc(*'XVID')
 out_vid = cv2.VideoWriter(output_video_path,fourcc, video_out_fps, video_out_res)
-reader = get_reader(video_url)
 y_pred_thresh_backup = []
 y_pred_thresh = []
 
@@ -153,7 +154,7 @@ for i, frame in enumerate(reader):
     FPS = 'Pred '+str(FPS)+' FPS'
     confidence_threshold = 0.1
     y_pred_thresh = [y_pred[k][y_pred[k,:,1] > confidence_threshold] for k in range(y_pred.shape[0])]
-    
+
 # =============================================================================
 #     if i % 2 == 0 and i>3:
 #         y_pred_thresh = y_pred_thresh_backup.copy()

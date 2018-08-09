@@ -29,7 +29,7 @@ from data_generator.object_detection_2d_photometric_ops import ConvertTo3Channel
 from data_generator.object_detection_2d_geometric_ops import Resize
 from data_generator.object_detection_2d_misc_utils import apply_inverse_transforms
 
-vidcap = cv2.VideoCapture('/media/ituarc/5050161626/720-24-rendered.mp4')
+vidcap = cv2.VideoCapture('/media/sahand/5050161626/720-24-rendered.mp4')
 
 img_height = 300
 img_width = 300
@@ -87,7 +87,7 @@ model.compile(optimizer=adam, loss=ssd_loss.compute_loss)
 orig_images = [] # Store the images here.
 input_images = [] # Store resized versions of the images here.
 # We'll only load one image in this example.
-img_path = '/media/ituarc/My Passport/data/Baidu/JPEGImages/171206_034332262_Camera_5.jpg'
+img_path = '/home/sahand/Desktop/170927_070506899_Camera_5.jpg'
 
 orig_images.append(imread(img_path))
 img = image.load_img(img_path, target_size=(img_height, img_width))
