@@ -3,7 +3,7 @@
 """
 Created on Sun Aug  5 23:20:53 2018
 
-@author: ituarc
+@author: https://github.com/sahandv
 """
 import time
 import cv2
