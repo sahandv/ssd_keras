@@ -349,12 +349,8 @@ print(y_pred_decoded_inv[i])
 
 # Set the colors for the bounding boxes
 colors = plt.cm.hsv(np.linspace(0, 1, n_classes+1)).tolist()
-classes = ['background',
-           'aeroplane', 'bicycle', 'bird', 'boat',
-           'bottle', 'bus', 'car', 'cat',
-           'chair', 'cow', 'diningtable', 'dog',
-           'horse', 'motorbike', 'person', 'pottedplant',
-           'sheep', 'sofa', 'train', 'tvmonitor']
+classes = ['0','33', '34', '35', '36',
+               '37', '38', '39', '81']
 
 plt.figure(figsize=(20,12))
 plt.imshow(batch_original_images[i])
