@@ -124,21 +124,21 @@ val_dataset = DataGenerator(load_images_into_memory=False, hdf5_dataset_path=Non
 # TODO: Set the paths to the datasets here.
 
 # The directories that contain the images.
-Baidu_images_dir      = '/media/sahand/Archive A/DataSets/BaiduVOC_08_10/JPEGImages/'
+Baidu_images_dir      = '/media/sahand/Archive A/DataSets/BaiduVOC_08_13/JPEGImages/'
 #VOC_2012_images_dir      = '../../datasets/VOCdevkit/VOC2012/JPEGImages/'
 
 # The directories that contain the annotations.
-Baidu_annotations_dir      = '/media/sahand/Archive A/DataSets/BaiduVOC_08_10/Annotations/'
+Baidu_annotations_dir      = '/media/sahand/Archive A/DataSets/BaiduVOC_08_13/Annotations/'
 #VOC_2012_annotations_dir      = '../../datasets/VOCdevkit/VOC2012/Annotations/'
 
 # The paths to the image sets.
-Baidu_train_image_set_filename    = '/media/sahand/Archive A/DataSets/BaiduVOC_08_10/ImageSets/Main/train.txt'
+Baidu_train_image_set_filename    = '/media/sahand/Archive A/DataSets/BaiduVOC_08_13/ImageSets/Main/train.txt'
 #VOC_2012_train_image_set_filename    = '../../datasets/VOCdevkit/VOC2012/ImageSets/Main/train.txt'
-Baidu_val_image_set_filename      = '/media/sahand/Archive A/DataSets/BaiduVOC_08_10/ImageSets/Main/val.txt'
+Baidu_val_image_set_filename      = '/media/sahand/Archive A/DataSets/BaiduVOC_08_13/ImageSets/Main/val.txt'
 #VOC_2012_val_image_set_filename      = '../../datasets/VOCdevkit/VOC2012/ImageSets/Main/val.txt'
-Baidu_trainval_image_set_filename = '/media/sahand/Archive A/DataSets/BaiduVOC_08_10/ImageSets/Main/trainval.txt'
+Baidu_trainval_image_set_filename = '/media/sahand/Archive A/DataSets/BaiduVOC_08_13/ImageSets/Main/trainval.txt'
 #VOC_2012_trainval_image_set_filename = '../../datasets/VOCdevkit/VOC2012/ImageSets/Main/trainval.txt'
-Baidu_test_image_set_filename     = '/media/sahand/Archive A/DataSets/BaiduVOC_08_10/ImageSets/Main/test.txt'
+Baidu_test_image_set_filename     = '/media/sahand/Archive A/DataSets/BaiduVOC_08_13/ImageSets/Main/test.txt'
 
 
 classes = ['0','33', '34', '35', '36',
@@ -282,7 +282,7 @@ callbacks = [model_checkpoint,
 
 # If you're resuming a previous training, set `initial_epoch` and `final_epoch` accordingly.
 initial_epoch   = 0
-final_epoch     = 4
+final_epoch     = 10
 steps_per_epoch = 1000
 
 history = model.fit_generator(generator=train_generator,
