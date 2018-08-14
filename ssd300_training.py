@@ -40,7 +40,7 @@ img_width = 300 # Width of the model input images
 img_channels = 3 # Number of color channels of the model input images
 mean_color = [123, 117, 104] # The per-channel mean of the images in the dataset. Do not change this value if you're using any of the pre-trained weights.
 swap_channels = [2, 1, 0] # The color channel order in the original SSD is BGR, so we'll have the model reverse the color channel order of the input images.
-n_classes = 20 # Number of positive classes, e.g. 20 for Pascal VOC, 80 for MS COCO
+n_classes = 8 # Number of positive classes, e.g. 20 for Pascal VOC, 80 for MS COCO
 scales_pascal = [0.1, 0.2, 0.37, 0.54, 0.71, 0.88, 1.05] # The anchor box scaling factors used in the original SSD300 for the Pascal VOC datasets
 scales_coco = [0.07, 0.15, 0.33, 0.51, 0.69, 0.87, 1.05] # The anchor box scaling factors used in the original SSD300 for the MS COCO datasets
 scales = scales_pascal
@@ -124,21 +124,21 @@ val_dataset = DataGenerator(load_images_into_memory=False, hdf5_dataset_path=Non
 # TODO: Set the paths to the datasets here.
 
 # The directories that contain the images.
-Baidu_images_dir      = '/media/sahand/Archive A/DataSets/BaiduVOC_08_13/JPEGImages/'
+Baidu_images_dir      = '/media/sahand/Archive A/DataSets/BaiduVOC_01/JPEGImages/'
 #VOC_2012_images_dir      = '../../datasets/VOCdevkit/VOC2012/JPEGImages/'
 
 # The directories that contain the annotations.
-Baidu_annotations_dir      = '/media/sahand/Archive A/DataSets/BaiduVOC_08_13/Annotations/'
+Baidu_annotations_dir      = '/media/sahand/Archive A/DataSets/BaiduVOC_01/Annotations/'
 #VOC_2012_annotations_dir      = '../../datasets/VOCdevkit/VOC2012/Annotations/'
 
 # The paths to the image sets.
-Baidu_train_image_set_filename    = '/media/sahand/Archive A/DataSets/BaiduVOC_08_13/ImageSets/Main/train.txt'
+Baidu_train_image_set_filename    = '/media/sahand/Archive A/DataSets/BaiduVOC_01/ImageSets/Main/train.txt'
 #VOC_2012_train_image_set_filename    = '../../datasets/VOCdevkit/VOC2012/ImageSets/Main/train.txt'
-Baidu_val_image_set_filename      = '/media/sahand/Archive A/DataSets/BaiduVOC_08_13/ImageSets/Main/val.txt'
+Baidu_val_image_set_filename      = '/media/sahand/Archive A/DataSets/BaiduVOC_01/ImageSets/Main/val.txt'
 #VOC_2012_val_image_set_filename      = '../../datasets/VOCdevkit/VOC2012/ImageSets/Main/val.txt'
-Baidu_trainval_image_set_filename = '/media/sahand/Archive A/DataSets/BaiduVOC_08_13/ImageSets/Main/trainval.txt'
+Baidu_trainval_image_set_filename = '/media/sahand/Archive A/DataSets/BaiduVOC_01/ImageSets/Main/trainval.txt'
 #VOC_2012_trainval_image_set_filename = '../../datasets/VOCdevkit/VOC2012/ImageSets/Main/trainval.txt'
-Baidu_test_image_set_filename     = '/media/sahand/Archive A/DataSets/BaiduVOC_08_13/ImageSets/Main/test.txt'
+Baidu_test_image_set_filename     = '/media/sahand/Archive A/DataSets/BaiduVOC_01/ImageSets/Main/test.txt'
 
 
 classes = ['0','33', '34', '35', '36',
@@ -282,7 +282,7 @@ callbacks = [model_checkpoint,
 
 # If you're resuming a previous training, set `initial_epoch` and `final_epoch` accordingly.
 initial_epoch   = 0
-final_epoch     = 10
+final_epoch     = 15
 steps_per_epoch = 1000
 
 history = model.fit_generator(generator=train_generator,
@@ -290,7 +290,7 @@ history = model.fit_generator(generator=train_generator,
                               epochs=final_epoch,
                               callbacks=callbacks,
                               validation_data=val_generator,
-                              validation_steps=ceil(val_dataset_size/batch_size),
+                              validation_steps=int(val_dataset_size/batch_size),
                               initial_epoch=initial_epoch)
 # =============================================================================
 # TEST
