@@ -49,10 +49,10 @@ def imageio2cvimg(image):
 video_url = '/home/sahand/720-24-rendered.mp4'
 output_video_path = 'output.avi'
 model_compile = True
-model_path = 'weights/VGG_VOC0712_SSD_300x300_ft_iter_120000.h5'
-weights_path = 'weights/VGG_VOC0712_SSD_300x300_ft_iter_120000.h5'
+model_path = 'weights/15-08-2018/ssd300_pascal_07+12_epoch-15_loss-7.0969_val_loss-6.1003.h5'
+weights_path = 'weights/15-08-2018/ssd300_pascal_07+12_epoch-15_loss-7.0969_val_loss-6.1003.h5'
 #video_out_res = (1280,720)
-video_out_fps = 10
+video_out_fps = 24
 img_height = 300
 img_width = 300
 font = cv2.FONT_HERSHEY_COMPLEX_SMALL
@@ -65,7 +65,7 @@ K.clear_session() # Clear previous models from memory.
 
 if model_compile == True:    
     model = ssd_300(image_size=(img_height, img_width, 3),
-                    n_classes=20,
+                    n_classes=8,
                     mode='inference',
                     l2_regularization=0.0005,
                     scales=[0.1, 0.2, 0.37, 0.54, 0.71, 0.88, 1.05], # The scales for MS COCO are [0.07, 0.15, 0.33, 0.51, 0.69, 0.87, 1.05]
@@ -172,12 +172,8 @@ for i, frame in enumerate(reader):
     
     # Set the colors for the bounding boxes
     colors = plt.cm.hsv(np.linspace(0, 1, 21)).tolist()
-    classes = ['background',
-               'ucak', 'bisiklet', '', '',
-               '', 'otobus', 'araba', '',
-               '', '', '', '',
-               '', 'motorsiklet', 'insan', '',
-               '', '', '', '']
+    classes = ['0','33', '34', '35', '36',
+               '37', '38', '39', '81']
 
     
     cv2.rectangle(frame, (10, 10), (180, 35), (255, 255, 255), cv2.FILLED)
@@ -199,12 +195,12 @@ for i, frame in enumerate(reader):
         cv2.putText(frame,label,(int(xmin),int(ymin-5)), font, font_scale,(255,255,255),thickness)
         
         
-#    imwrite('out.jpg',frame)
+    imwrite('out.jpg',frame)
     #fig = plt.gcf()
     #videowriter.append_data(frame)
     out_img = imageio2cvimg(frame)
     out_vid.write(out_img)
-    if i > 100:
+    if i > 1000:
         break
 #videowriter.close()     
 #cv2.destroyAllWindows()

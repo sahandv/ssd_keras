@@ -324,8 +324,12 @@ print(np.array(batch_original_labels[i]))
 
 # 3: Make predictions.
 
+start_time = time.time()
 y_pred = model.predict(batch_images)
-
+prediction_time = (time.time() - start_time)
+FPS = int(1/prediction_time)
+FPS = 'Pred '+str(FPS)+' FPS'
+print(FPS)
 # 4: Decode the raw predictions in `y_pred`.
 
 y_pred_decoded = decode_detections(y_pred,
