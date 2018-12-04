@@ -46,13 +46,13 @@ def imageio2cvimg(image):
 # =============================================================================
 # Project Config
 # =============================================================================
-video_url = '/home/sahand/720-24-rendered.mp4'
-output_video_path = 'output.avi'
+video_url = '/home/sahand/Documents/istanbultraffic-test.mp4'
+output_video_path = 'output_b.avi'
 model_compile = True
 model_path = 'weights/VGG_VOC0712Plus_SSD_300x300_ft_iter_160000.h5'
 weights_path = 'weights/VGG_VOC0712Plus_SSD_300x300_ft_iter_160000.h5'
 #video_out_res = (1280,720)
-video_out_fps = 24
+video_out_fps = 30
 img_height = 300
 img_width = 300
 font = cv2.FONT_HERSHEY_COMPLEX_SMALL
@@ -65,7 +65,7 @@ K.clear_session() # Clear previous models from memory.
 
 if model_compile == True:    
     model = ssd_300(image_size=(img_height, img_width, 3),
-                    n_classes=8,
+                    n_classes=20,
                     mode='inference',
                     l2_regularization=0.0005,
                     scales=[0.1, 0.2, 0.37, 0.54, 0.71, 0.88, 1.05], # The scales for MS COCO are [0.07, 0.15, 0.33, 0.51, 0.69, 0.87, 1.05]
@@ -172,8 +172,13 @@ for i, frame in enumerate(reader):
     
     # Set the colors for the bounding boxes
     colors = plt.cm.hsv(np.linspace(0, 1, 21)).tolist()
-    classes = ['0','33', '34', '35', '36',
-               '37', '38', '39', '81']
+    classes = ['',
+           '', 'bike', '', '',
+           '', 'truck', 'car', '',
+           '', '', '', '',
+           '', 'bike', 'person', '',
+           '', '', '', '']
+
 
     
     cv2.rectangle(frame, (10, 10), (180, 35), (255, 255, 255), cv2.FILLED)
@@ -195,13 +200,13 @@ for i, frame in enumerate(reader):
         cv2.putText(frame,label,(int(xmin),int(ymin-5)), font, font_scale,(255,255,255),thickness)
         
         
-    imwrite('out.jpg',frame)
+#    imwrite('out.jpg',frame)
     #fig = plt.gcf()
     #videowriter.append_data(frame)
     out_img = imageio2cvimg(frame)
     out_vid.write(out_img)
-    if i > 1000:
-        break
+#    if i > 1000:
+#        break
 #videowriter.close()     
 #cv2.destroyAllWindows()
 out_vid.release()
