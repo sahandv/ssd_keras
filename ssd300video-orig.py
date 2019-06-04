@@ -63,7 +63,7 @@ model = ssd_300(image_size=(img_height, img_width, 3),
 # 2: Load the trained weights into the model.
 
 # TODO: Set the path of the trained weights.
-weights_path = 'weights/VGG_VOC0712_SSD_300x300_iter_120000.h5'
+weights_path = 'VGG_VOC0712Plus_SSD_300x300_ft_iter_160000.h5'
 
 model.load_weights(weights_path, by_name=True)
 
@@ -87,7 +87,7 @@ model.compile(optimizer=adam, loss=ssd_loss.compute_loss)
 orig_images = [] # Store the images here.
 input_images = [] # Store resized versions of the images here.
 # We'll only load one image in this example.
-img_path = '/home/sahand/Desktop/170927_070506899_Camera_5.jpg'
+img_path = '/home/sahand/Projects/city/sydney1.jpg'
 
 orig_images.append(imread(img_path))
 img = image.load_img(img_path, target_size=(img_height, img_width))
